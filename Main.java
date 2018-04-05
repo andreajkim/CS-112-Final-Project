@@ -1,11 +1,8 @@
-import javazoom.jl.player.Player;
-
 import java.io.File;
-import java.util.List;
 
 public class Main{
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException {
         MP3Chooser mp3Chooser = new MP3Chooser();
         MainMP3 mainMP3 = new MainMP3();
 
@@ -13,6 +10,19 @@ public class Main{
 
         File[] mp3Files = mp3Chooser.chooseOnlyMP3s(folder);
 
-        List<Player> mp3Players = mainMP3.player(mp3Files);
+        mainMP3.player(mp3Files);
+
+        mainMP3.play();
+
+        Thread.sleep(7000);
+
+        mainMP3.pause();
+
+        Thread.sleep(5000);
+
+        mainMP3.skipNext();
+
+
+
     }
 }
