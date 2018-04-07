@@ -4,14 +4,22 @@ import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class MusicPlayer extends Applet implements ActionListener {
 
     String songName;
     Label label;
     Image visualization;
-    Button open, show, toggle, queue, something;
-    Button play, skipPrevious, skipNext, shuffle, repeat;
+    Button open, show, toggle, queue, something, something1;
+    Button play, skipPrevious, skipNext, shuffle, repeatOnce, repeatMany;
+    static boolean fileChosen = false;
+    static boolean everPlayed = false;
+    static boolean currentlyPlaying = false;
+
+    //initialize backend objects
+    MP3Chooser mp3Chooser = new MP3Chooser();
+    MainMP3 mainMP3 = new MainMP3();
 
     protected void makebutton(String name, GridBagLayout gridbag, GridBagConstraints c) {
         Button button = new Button(name);
@@ -21,6 +29,7 @@ public class MusicPlayer extends Applet implements ActionListener {
     }
 
     public void init() {
+
         //set background
         Color k = new Color(79,91,102);
         setBackground(k);
@@ -61,15 +70,23 @@ public class MusicPlayer extends Applet implements ActionListener {
         queue.addActionListener(this);
         add(queue);
 
-        c.gridwidth = GridBagConstraints.REMAINDER; //complete first row
-
         //make something button
         something = new Button("Something");
         gridbag.setConstraints(something, c);
         something.addActionListener(this);
         add(something);
 
+        c.gridwidth = GridBagConstraints.REMAINDER; //complete first row
+
+        //make something button
+        something1 = new Button("Something1");
+        gridbag.setConstraints(something1, c);
+        something1.addActionListener(this);
+        add(something1);
+
         //end of first row
+
+        //print current song playing
 
         label = new Label(songName, Label.CENTER);
         label.setForeground(Color.white);
@@ -81,7 +98,7 @@ public class MusicPlayer extends Applet implements ActionListener {
         c.weightx = 1.0;
 
         //make shuffle button
-        shuffle = new Button("Shuffle");
+        shuffle = new Button("Shuffle Order");
         gridbag.setConstraints(shuffle, c);
         shuffle.addActionListener(this);
         add(shuffle);
@@ -104,23 +121,78 @@ public class MusicPlayer extends Applet implements ActionListener {
         skipNext.addActionListener(this);
         add(skipNext);
 
+        //make repeat button
+        repeatOnce = new Button("Repeat Once");
+        gridbag.setConstraints(repeatOnce, c);
+        repeatOnce.addActionListener(this);
+        add(repeatOnce);
+
         c.gridwidth = GridBagConstraints.REMAINDER; //complete last row
 
         //make repeat button
-        repeat = new Button("Repeat");
-        gridbag.setConstraints(repeat, c);
-        repeat.addActionListener(this);
-        add(repeat);
+        repeatMany = new Button("Repeat On/Off");
+        gridbag.setConstraints(repeatMany, c);
+        repeatMany.addActionListener(this);
+        add(repeatMany);
 
         //end of last row
 
-        setSize(300, 500);
+        setSize(400, 500);
     }
 
     public void paint(Graphics g){
     }
 
-    public void actionPerformed(ActionEvent ae){
 
+    public void actionPerformed(ActionEvent ae){
+        String com = ae.getActionCommand();
+
+        switch(com){
+            case "Open Music":
+                fileChosen = true;
+                File[] folder = mp3Chooser.chooseMusicFolder("/Users/hufengling/git/GitHub/");
+                File[] mp3Files = mp3Chooser.chooseOnlyMP3s(folder);
+                mainMP3.player(mp3Files);
+                //mainMP3.shuffle();
+                break;
+            case "Show Graphic":
+                break;
+
+                //insert other functionality here
+
+
+            case "Shuffle Order":
+                mainMP3.shuffle();
+                break;
+            case "Previous":
+                mainMP3.skipPrevious();
+                break;
+            case "Play/Pause":
+                if(everPlayed == false) { //start playing if never played
+                    mainMP3.play();
+                    everPlayed = true;
+                    currentlyPlaying = true;
+                    break;
+                }
+                else if(currentlyPlaying == true){ //pause if playing
+                    mainMP3.pause();
+                    currentlyPlaying = false;
+                    break;
+                }
+                else if(currentlyPlaying == false){ //resume if paused
+                    mainMP3.resume();
+                    currentlyPlaying = true;
+                    break;
+                }
+                else {
+                    break;
+                }
+            case "Next":
+                mainMP3.skipNext();
+                break;
+            case "Repeat Once":
+                mainMP3.repeatOnce();
+
+        }
     }
 }

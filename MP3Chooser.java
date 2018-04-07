@@ -12,7 +12,6 @@ public class MP3Chooser{
         int returnVal = chooser.showOpenDialog(null);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
 
-            System.out.println("default set");
             return chooser.getSelectedFile().getAbsolutePath();
         }
         return null; //may bug
@@ -71,6 +70,7 @@ public class MP3Chooser{
             if (file.getName().toLowerCase().contains(".mp3")){
                 onlyMP3s[currentIndex] = file;
                 currentIndex++;
+
             }
         }
 

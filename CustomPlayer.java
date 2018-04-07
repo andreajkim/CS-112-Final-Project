@@ -1,4 +1,4 @@
-import javazoom.jl.player.Player;
+import javazoom.jl.player.advanced.AdvancedPlayer;
 
 import javax.swing.*;
 import java.io.BufferedInputStream;
@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 //Credit to Josh M (https://stackoverflow.com/questions/12057214/jlayer-pause-and-resume-song)
 public class CustomPlayer {
 
-    private Player player;
+    private AdvancedPlayer player;
     private FileInputStream FIS;
     private BufferedInputStream BIS;
     private boolean canResume;
@@ -27,7 +27,15 @@ public class CustomPlayer {
         canResume = false;
     }
 
-    public boolean canResume(){
+    public int getStopped() {
+        return stopped;
+    }
+
+    public void setStopped(int stopped){
+        this.stopped = stopped;
+    }
+
+    public boolean getCanResume(){
         return canResume;
     }
 
@@ -58,7 +66,7 @@ public class CustomPlayer {
 
     public void resume(){
         if(!canResume) return;
-        if(play(total-stopped)) canResume = false;
+        if(play(total-stopped-7500)) canResume = false;
     }
 
     public boolean play(int pos){
@@ -69,7 +77,7 @@ public class CustomPlayer {
             total = FIS.available();
             if(pos > -1) FIS.skip(pos);
             BIS = new BufferedInputStream(FIS);
-            player = new Player(BIS);
+            player = new AdvancedPlayer(BIS);
             new Thread(
                     new Runnable(){
                         public void run(){
@@ -96,7 +104,7 @@ public class CustomPlayer {
             FIS = new FileInputStream(path);
             total = FIS.available();
             BIS = new BufferedInputStream(FIS);
-            player = new Player(BIS);
+            player = new AdvancedPlayer(BIS);
             new Thread(
                     new Runnable(){
                         public void run(){
