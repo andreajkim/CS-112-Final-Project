@@ -7,6 +7,9 @@ public class MainMP3 {
     int currentIndex = 0;
     List<CustomPlayer> currentPlayer = new LinkedList<CustomPlayer>();
 
+    public boolean everPlayed = false;
+    public boolean currentlyPlaying = true;
+
     //make a music player for each audio file
     public void player(File[] mp3Name){
         List<CustomPlayer> player = new LinkedList<CustomPlayer>();
@@ -33,16 +36,20 @@ public class MainMP3 {
     //start playing music
     public void play() {
         System.out.println(currentIndex);
+        everPlayed = true;
+        currentlyPlaying = true;
         currentPlayer.get(currentIndex).play();
     }
 
     //records current time, makes a new copy, stops the old copy
     public void pause(){
+        currentlyPlaying = false;
         currentPlayer.get(currentIndex).pause();
     }
 
     //restarts new player at paused time
     public void resume(){
+        currentlyPlaying = true;
         currentPlayer.get(currentIndex).resume();
     }
 
@@ -51,7 +58,7 @@ public class MainMP3 {
         stop();
 
         currentIndex++;
-        currentPlayer.get(currentIndex).play();
+        play();
     }
 
     //skips to previous song
@@ -59,7 +66,7 @@ public class MainMP3 {
         stop();
 
         currentIndex--;
-        currentPlayer.get(currentIndex).play();
+        play();
     }
 
     //repeats song once (by adding a copy of it)
@@ -85,51 +92,37 @@ public class MainMP3 {
         List<CustomPlayer> unshuffledPlayer = currentPlayer;
         int totalSize = unshuffledPlayer.size();
 
+        //put current song at front of new player and keep it playing
+        //add current song to beginning of newest list
+        shuffledPlayer.add(0, currentSong);
+        unshuffledPlayer.remove(currentIndex);
+
         //adds songs in random order to new player
         for(int i = 0; i < totalSize; i++){
-            int index = rand.nextInt(totalSize  -i);
+            int index = rand.nextInt(totalSize  - i);
 
             shuffledPlayer.add(unshuffledPlayer.get(index));
             unshuffledPlayer.remove(index);
         }
 
-        //add current song to beginning of newest list
-        shuffledPlayer.add(0, currentSong);
+        //pauses song on currentPlayer and records time stopped
+        currentPlayer.get(currentIndex).pause();
+        int stopped = currentPlayer.get(currentIndex).getStopped();
 
-        //restart(currentPlayer, shuffledPlayer);
+        //play (to start), pause (to set variables appropriately), and overwrite pause timer (so it resumes at the right time)
+        shuffledPlayer.get(0).play();
+        shuffledPlayer.get(0).pause();
+        shuffledPlayer.get(0).setStopped(stopped);
+
+        //if currentlyPlaying, resume playing
+        if(currentlyPlaying == true)
+            shuffledPlayer.get(0).resume();
 
         //overwrites current player with updated list
         currentPlayer = shuffledPlayer;
 
         //starts over at beginning
         setIndex(0);
-    }
-
-    //?????
-    //Move currently playing song to new list and keep it playing
-    public void restart(List<CustomPlayer> toReplace, List<CustomPlayer> replacement){
-        int stopped;
-        boolean canResume;
-
-        //pauses song on toReplace and records time stopped and whether or not it was playing or paused
-        toReplace.get(currentIndex).pause();
-        stopped = toReplace.get(currentIndex).getStopped();
-        canResume = toReplace.get(currentIndex).getCanResume();
-
-
-        replacement.get(0).play();
-        replacement.get(0).pause();
-        replacement.get(0).setStopped(stopped);
-
-        /*
-        replacement.get(0).setStopped(stopped);
-        replacement.get(0).setCanResume(true);
-        */
-
-        if(canResume == false){
-            replacement.get(0).resume();
-        }
-
     }
 
     //stops song and makes it restart at beginning next time (pauses/removes current song and replaces it with a new version)

@@ -13,7 +13,6 @@ public class MusicPlayer extends Applet implements ActionListener {
     Image visualization;
     Button open, show, toggle, queue, something, something1;
     Button play, skipPrevious, skipNext, shuffle, repeatOnce, repeatMany;
-    static boolean fileChosen = false;
     static boolean everPlayed = false;
     static boolean currentlyPlaying = false;
 
@@ -149,7 +148,6 @@ public class MusicPlayer extends Applet implements ActionListener {
 
         switch(com){
             case "Open Music":
-                fileChosen = true;
                 File[] folder = mp3Chooser.chooseMusicFolder("/Users/hufengling/git/GitHub/");
                 File[] mp3Files = mp3Chooser.chooseOnlyMP3s(folder);
                 mainMP3.player(mp3Files);
@@ -168,20 +166,16 @@ public class MusicPlayer extends Applet implements ActionListener {
                 mainMP3.skipPrevious();
                 break;
             case "Play/Pause":
-                if(everPlayed == false) { //start playing if never played
+                if(mainMP3.everPlayed == false) { //start playing if never played
                     mainMP3.play();
-                    everPlayed = true;
-                    currentlyPlaying = true;
                     break;
                 }
-                else if(currentlyPlaying == true){ //pause if playing
+                else if(mainMP3.currentlyPlaying == true){ //pause if playing
                     mainMP3.pause();
-                    currentlyPlaying = false;
-                    break;
+                    break   ;
                 }
-                else if(currentlyPlaying == false){ //resume if paused
+                else if(mainMP3.currentlyPlaying == false){ //resume if paused
                     mainMP3.resume();
-                    currentlyPlaying = true;
                     break;
                 }
                 else {

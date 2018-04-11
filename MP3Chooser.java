@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.io.File;
 
 public class MP3Chooser{
+    public static boolean fileChosen = false; //might be useful for "Make sure to choose files" or something
 
     //UNUSED: want to have a preference pane where you can choose your default music folder
     public static String setDefaultDirectory(){
@@ -56,6 +57,7 @@ public class MP3Chooser{
     public static File[] chooseOnlyMP3s(File[] listOfFiles){
         int maxMP3s = listOfFiles.length;
         int count = 0;
+        fileChosen = true;
 
         for(int i = 0; i < maxMP3s; i++){
             if (listOfFiles[i].getName().toLowerCase().contains(".mp3")){
