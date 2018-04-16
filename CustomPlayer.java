@@ -53,9 +53,9 @@ public class CustomPlayer {
 
     public void pause(){
         try{
-            stopped = FIS.available();
-            player.close();
-            FIS = null;
+            stopped = FIS.available(); //check how many bytes are unread in the song
+            player.close(); //kill the player
+            FIS = null; //set appropriate variables
             BIS = null;
             player = null;
             if(valid) canResume = true;
@@ -65,8 +65,9 @@ public class CustomPlayer {
     }
 
     public void resume(){
-        if(!canResume) return;
-        if(play(total-stopped-7500)) canResume = false;
+        if(!canResume) return; //doesn't do anything if a song is currently playing
+        if(play(total-stopped-7500)) //plays the song, but starting at paused time.
+            canResume = false; //sets can resume
     }
 
     public boolean play(int pos){
@@ -84,20 +85,20 @@ public class CustomPlayer {
                             try{
                                 player.play();
                             }catch(Exception e){
-                                JOptionPane.showMessageDialog(null, "Error playing mp3 file");
+                                JOptionPane.showMessageDialog(null, "Error playing mp3 file: 1");
                                 valid = false;
                             }
                         }
                     }
             ).start();
         }catch(Exception e){
-            JOptionPane.showMessageDialog(null, "Error playing mp3 file");
+            JOptionPane.showMessageDialog(null, "Error playing mp3 file: 2");
             valid = false;
         }
         return valid;
     }
 
-    public boolean play(){
+    public boolean play(){ //same player as above, but only run if no stop time is specified
         valid = true;
         canResume = false;
         try{
@@ -111,14 +112,14 @@ public class CustomPlayer {
                             try{
                                 player.play();
                             }catch(Exception e){
-                                JOptionPane.showMessageDialog(null, "Error playing mp3 file");
+                                //JOptionPane.showMessageDialog(null, "Error playing mp3 file: 3");
                                 valid = false;
                             }
                         }
                     }
             ).start();
         }catch(Exception e){
-            JOptionPane.showMessageDialog(null, "Error playing mp3 file");
+            JOptionPane.showMessageDialog(null, "Error playing mp3 file: 4");
             valid = false;
         }
         return valid;

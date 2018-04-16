@@ -11,10 +11,9 @@ public class MusicPlayer extends Applet implements ActionListener {
     String songName;
     Label label;
     Image visualization;
-    Button open, show, toggle, queue, something, something1;
+    Button open, show, toggle, queue, something, quit;
     Button play, skipPrevious, skipNext, shuffle, repeatOnce, repeatMany;
-    static boolean everPlayed = false;
-    static boolean currentlyPlaying = false;
+    boolean filesLoaded = false;
 
     //initialize backend objects
     MP3Chooser mp3Chooser = new MP3Chooser();
@@ -78,10 +77,10 @@ public class MusicPlayer extends Applet implements ActionListener {
         c.gridwidth = GridBagConstraints.REMAINDER; //complete first row
 
         //make something button
-        something1 = new Button("Something1");
-        gridbag.setConstraints(something1, c);
-        something1.addActionListener(this);
-        add(something1);
+        quit = new Button("Quit");
+        gridbag.setConstraints(quit, c);
+        quit.addActionListener(this);
+        add(quit);
 
         //end of first row
 
@@ -151,21 +150,34 @@ public class MusicPlayer extends Applet implements ActionListener {
                 File[] folder = mp3Chooser.chooseMusicFolder("/Users/hufengling/git/GitHub/");
                 File[] mp3Files = mp3Chooser.chooseOnlyMP3s(folder);
                 mainMP3.player(mp3Files);
+                if (mainMP3.currentPlayer.size() != 0){
+                    filesLoaded = true;
+                }
                 //mainMP3.shuffle();
                 break;
             case "Show Graphic":
+                if(filesLoaded == false)
+                    break;
                 break;
 
                 //insert other functionality here
 
-
+            case "Quit":
+                System.exit(0); //close the program (X button doesn't work in applet)
+                break;
             case "Shuffle Order":
+                if(filesLoaded == false || mainMP3.everPlayed == false)
+                    break;
                 mainMP3.shuffle();
                 break;
             case "Previous":
+                if(filesLoaded == false)
+                    break;
                 mainMP3.skipPrevious();
                 break;
             case "Play/Pause":
+                if(filesLoaded == false)
+                    break;
                 if(mainMP3.everPlayed == false) { //start playing if never played
                     mainMP3.play();
                     break;
@@ -182,10 +194,15 @@ public class MusicPlayer extends Applet implements ActionListener {
                     break;
                 }
             case "Next":
+                if(filesLoaded == false)
+                    break;
                 mainMP3.skipNext();
                 break;
             case "Repeat Once":
+                if(filesLoaded == false)
+                    break;
                 mainMP3.repeatOnce();
+                break;
 
         }
     }
