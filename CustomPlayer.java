@@ -8,7 +8,7 @@ import java.io.FileInputStream;
 public class CustomPlayer {
 
     private AdvancedPlayer player;
-    private FileInputStream FIS;
+    public FileInputStream FIS;
     private BufferedInputStream BIS;
     private boolean canResume;
     private String path;

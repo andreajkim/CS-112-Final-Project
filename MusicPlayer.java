@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 public class MusicPlayer extends Applet implements ActionListener {
 
@@ -147,7 +148,7 @@ public class MusicPlayer extends Applet implements ActionListener {
 
         switch(com){
             case "Open Music":
-                File[] folder = mp3Chooser.chooseMusicFolder("/Users/hufengling/git/GitHub/");
+                File[] folder = mp3Chooser.chooseMusicFolder("/");
                 File[] mp3Files = mp3Chooser.chooseOnlyMP3s(folder);
                 mainMP3.player(mp3Files);
                 if (mainMP3.currentPlayer.size() != 0){
@@ -180,6 +181,32 @@ public class MusicPlayer extends Applet implements ActionListener {
                     break;
                 if(mainMP3.everPlayed == false) { //start playing if never played
                     mainMP3.play();
+                    new Thread(new Runnable(){
+                        public void run(){
+                            try {
+                                int i = mainMP3.currentPlayer.get(mainMP3.currentIndex).FIS.available();
+
+                                if(i <= 200){
+                                    mainMP3.skipNext();
+                                }
+
+                                if(i > 200) {
+                                    System.out.println("still listening");
+                                    Thread.sleep(1000);
+                                }
+
+                                run();
+
+                            }
+                            catch (InterruptedException e) {
+                                e.printStackTrace();
+                                run();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                run();
+                            }
+                        }
+                    }).start();
                     break;
                 }
                 else if(mainMP3.currentlyPlaying == true){ //pause if playing
