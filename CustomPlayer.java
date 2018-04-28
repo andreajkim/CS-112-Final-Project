@@ -1,10 +1,12 @@
 import javazoom.jl.player.advanced.AdvancedPlayer;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.swing.*;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 
 //Credit to Josh M (https://stackoverflow.com/questions/12057214/jlayer-pause-and-resume-song)
+//I (Feng) added a some methods/customized the player to suit my needs. These changes are less than 10% of the intellectual contribution.
 public class CustomPlayer {
 
     private AdvancedPlayer player;
@@ -15,6 +17,7 @@ public class CustomPlayer {
     private int total;
     private int stopped;
     private boolean valid;
+    public AudioInputStream audioInputStream;
 
     public CustomPlayer(){
         player = null;
@@ -79,6 +82,7 @@ public class CustomPlayer {
             if(pos > -1) FIS.skip(pos);
             BIS = new BufferedInputStream(FIS);
             player = new AdvancedPlayer(BIS);
+            //audioInputStream = new AudioInputStream(path);
             new Thread(
                     new Runnable(){
                         public void run(){
@@ -106,6 +110,7 @@ public class CustomPlayer {
             total = FIS.available();
             BIS = new BufferedInputStream(FIS);
             player = new AdvancedPlayer(BIS);
+            //audioInputStream = new AudioInputStream(path);
             new Thread(
                     new Runnable(){
                         public void run(){
