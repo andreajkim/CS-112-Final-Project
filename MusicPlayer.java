@@ -5,24 +5,48 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 
 public class MusicPlayer extends Applet implements ActionListener {
 
     String songName;
     Label label;
     Image visualization;
-    Button open, show, toggle, queue, something, quit;
+    Button open, show, toggle, queue, setDefaultDirectory, quit;
     Button play, skipPrevious, skipNext, shuffle, repeatOnce, repeatMany;
     boolean filesLoaded = false;
+    String defaultDir;
+    File[] mp3Files;
+    String folderPath;
 
     //initialize backend objects
     MP3Chooser mp3Chooser = new MP3Chooser();
     MainMP3 mainMP3 = new MainMP3();
 
-    //overwriting init method of Applet
-    public void init() {
+    
+    protected void makebutton(String name, GridBagLayout gridbag, GridBagConstraints c) {
+        Button button = new Button(name);
+        gridbag.setConstraints(button, c);
+        button.addActionListener(this);
+        add(button);
+    }
 
+    public void init() {
+	
+	//setting Default Directory
+	if(mp3Chooser.checkDefaultDirectory() == true){
+
+	    //gets default and loads it into mp3player
+	    folderPath = mp3Chooser.getDefaultDirectory();
+	    System.out.println(mp3Chooser.getDefaultDirectory());
+	    mp3Files = mp3Chooser.chooseOnlyMP3s(folderPath);
+	    mainMP3.player(mp3Files);
+
+	    mp3Chooser.usingDefault = true;
+	    filesLoaded = true;
+	
+	    
+	}
+	
         //set background
         Color k = new Color(79,91,102);
         setBackground(k);
@@ -45,6 +69,12 @@ public class MusicPlayer extends Applet implements ActionListener {
         open.addActionListener(this);
         add(open);
 
+	//make Set Default Directory button
+        setDefaultDirectory = new Button("Set Default Music");
+        gridbag.setConstraints(setDefaultDirectory, c);
+        setDefaultDirectory.addActionListener(this);
+        add(setDefaultDirectory);
+
         //make show graphics button
         show = new Button("Show Graphic");
         gridbag.setConstraints(show, c);
@@ -61,13 +91,7 @@ public class MusicPlayer extends Applet implements ActionListener {
         queue = new Button("Show Queue");
         gridbag.setConstraints(queue, c);
         queue.addActionListener(this);
-        add(queue);
-
-        //make something button
-        something = new Button("Something");
-        gridbag.setConstraints(something, c);
-        something.addActionListener(this);
-        add(something);
+        add(queue);      
 
         c.gridwidth = GridBagConstraints.REMAINDER; //complete first row
 
@@ -78,6 +102,14 @@ public class MusicPlayer extends Applet implements ActionListener {
         add(quit);
 
         //end of first row
+
+        //print current song playing
+
+        label = new Label(songName, Label.CENTER);
+        label.setForeground(Color.white);
+        Border border = BorderFactory.createLineBorder(Color.WHITE, 5);
+        gridbag.setConstraints(label, c);
+        add(label);
 
         c.gridwidth = 1;                //reset to the default
         c.weightx = 1.0;
@@ -123,38 +155,30 @@ public class MusicPlayer extends Applet implements ActionListener {
         //end of last row
 
         setSize(400, 500);
-
-        //force user to choose directory of mp3s as soon as applet is opened (since nothing can occur without loaded mp3s)
-        File[] folder = mp3Chooser.chooseMusicFolder("/"); //choose folder
-        File[] mp3Files = mp3Chooser.chooseOnlyMP3s(folder); //filter for only mp3s
-        mainMP3.player(mp3Files);
-        if (mainMP3.currentPlayer.size() != 0){
-            filesLoaded = true; //tell program that files have been loaded, if there were mp3s in the selected folder (to enable all other commands)
-        }
     }
 
-    //will contain visualizations (hopefully...)
     public void paint(Graphics g){
     }
 
-    //actionListener to check for button pushes
+
     public void actionPerformed(ActionEvent ae){
         String com = ae.getActionCommand();
 
-        //switch case for commands
         switch(com){
-            //open music (same code as above) to rechoose new directory of mp3s, if wanted
             case "Open Music":
-                File[] folder = mp3Chooser.chooseMusicFolder("/");
-                File[] mp3Files = mp3Chooser.chooseOnlyMP3s(folder);
+                folderPath = mp3Chooser.chooseMusicFolder();
+                mp3Files = mp3Chooser.chooseOnlyMP3s(folderPath);
                 mainMP3.player(mp3Files);
-                if (mainMP3.currentPlayer.size() != 0){
-                    filesLoaded = true;
-                }
-
+	        mp3Chooser.setFalseDefaultUse();
                 break;
-
-            //open a window for graphics
+		
+	case "Set Default Music":
+	    mp3Chooser.setDefaultDirectory();
+	    folderPath = mp3Chooser.getDefaultDirectory();
+	    mp3Files = mp3Chooser.chooseOnlyMP3s(folderPath);
+	    mainMP3.player(mp3Files);
+	    break;
+	    
             case "Show Graphic":
                 if(filesLoaded == false)
                     break;
@@ -162,103 +186,42 @@ public class MusicPlayer extends Applet implements ActionListener {
 
                 //insert other functionality here
 
-            //quit the program
             case "Quit":
                 System.exit(0); //close the program (X button doesn't work in applet)
                 break;
-            //shuffle order of songs
             case "Shuffle Order":
                 if(filesLoaded == false || mainMP3.everPlayed == false)
                     break;
                 mainMP3.shuffle();
                 break;
-            //go to previous song. If at song index 0, go to last song in queue
             case "Previous":
                 if(filesLoaded == false)
                     break;
                 mainMP3.skipPrevious();
                 break;
-            //play or pause or resume song
             case "Play/Pause":
                 if(filesLoaded == false)
                     break;
                 if(mainMP3.everPlayed == false) { //start playing if never played
                     mainMP3.play();
-                    new Thread(new Runnable(){ //create thread to detect how much song is left
-                        public void run(){
-                            try {
-                                int i = mainMP3.currentPlayer.get(mainMP3.currentIndex).FIS.available(); //load amount of song left
-
-                                if(i <= 10000){
-                                    mainMP3.skipNext(); //if amount of song left is less than 1-2 seconds, skipNext
-                                }
-                                else if(i > 10000) {
-                                    System.out.println("still listening" + i); 
-                                    Thread.sleep(500); //otherwise, wait for 0.5 seconds
-                                }
-
-                                run(); //restart the listening thread
-
-                            }
-                            catch (InterruptedException e) {
-                                e.printStackTrace();
-                                System.out.println("interrupted");
-                                run(); //if something happens, try to restart itself
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                System.out.println("io");
-                                run(); //if something happens, try to restart itself
-                            }
-                        }
-                    }).start();
                     break;
                 }
                 else if(mainMP3.currentlyPlaying == true){ //pause if playing
                     mainMP3.pause();
-                    break;
+                    break   ;
                 }
                 else if(mainMP3.currentlyPlaying == false){ //resume if paused
                     mainMP3.resume();
-                    new Thread(new Runnable(){ //same code as above
-                        public void run(){
-                            try {
-                                int i = mainMP3.currentPlayer.get(mainMP3.currentIndex).FIS.available();
-
-                                if(i <= 10000){
-                                    mainMP3.skipNext();
-                                }
-
-                                if(i > 10000) {
-                                    System.out.println("still listening" + i);
-                                    Thread.sleep(500);
-                                }
-
-                                run();
-
-                            }
-                            catch (InterruptedException e) {
-                                e.printStackTrace();
-                                System.out.println("interrupted");
-                                run();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                System.out.println("io");
-                                run();
-                            }
-                        }
-                    }).start();
                     break;
                 }
                 else {
                     break;
                 }
-            //go to next song. If at last song in queue, go to first song in queue
             case "Next":
                 if(filesLoaded == false)
                     break;
                 mainMP3.skipNext();
                 break;
-            //repeat the current song one time
             case "Repeat Once":
                 if(filesLoaded == false)
                     break;
@@ -267,4 +230,7 @@ public class MusicPlayer extends Applet implements ActionListener {
 
         }
     }
-}
+
+ 
+	
+}//end file
