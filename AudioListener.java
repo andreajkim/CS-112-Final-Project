@@ -1,6 +1,6 @@
 import ddf.minim.*;
 
-public AudioListener{
+public class AudioListener{
     Minim minim;
     boolean listening;
     BeatListener beats;
