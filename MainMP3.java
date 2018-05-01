@@ -107,7 +107,12 @@ public class MainMP3 {
     public void repeatAlways(){
         currentPlayer.get(currentIndex).play();
     }
-
+    public void queue(){
+	while(currentIndex != currentPlayer.size()){
+	    currentIndex++;
+	    System.out.println("Coming Soon:"+ currentPlayer.get(currentIndex).getPath());
+	}
+    }
     //????
     //shuffles order of songs (needs to be fixed)
     public void shuffle(){
