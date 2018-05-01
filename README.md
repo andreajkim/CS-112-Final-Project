@@ -1,7 +1,7 @@
 # CS-112-Final-Project
 2018 Spring Semester 
 
-Group members: Fengling Hu, Martin Glusker, Andrea Kim, Caled Winfrey
+Group members: Fengling Hu, Martin Glusker, Andrea Kim, Caleb Winfrey
 
 To compile: You will need to install JavaZoom (included as jl1.0.1.jar) into your Java Extensions folder. This jar file contains .class files.
 
