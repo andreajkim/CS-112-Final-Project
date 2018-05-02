@@ -24,7 +24,7 @@ public class MusicPlayer extends Applet implements ActionListener {
     MainMP3 mainMP3 = new MainMP3();
     ShowQueue showQueue = new ShowQueue();
 
-    
+
     protected void makebutton(String name, GridBagLayout gridbag, GridBagConstraints c) {
         Button button = new Button(name);
         gridbag.setConstraints(button, c);
@@ -33,42 +33,42 @@ public class MusicPlayer extends Applet implements ActionListener {
     }
 
     public void init() {
-	
-	//initializing Default Directory 
-	//checks to see if Default Directory exists
-	//System.out.println(mp3Chooser.checkDefaultDirectory()); //troubleshooting
-	
-	if(mp3Chooser.checkDefaultDirectory()){
-	    
-	    
-	    mp3Files = mp3Chooser.chooseOnlyMP3s(mp3Chooser.getDefaultDirectory());
-	    mainMP3.player(mp3Files);
 
-	    mp3Chooser.usingDefault = true;
-	    filesLoaded = true;
+        //initializing Default Directory
+        //checks to see if Default Directory exists
+        //System.out.println(mp3Chooser.checkDefaultDirectory()); //troubleshooting
 
-	    
-	//if there isn't a default directory go straight to chooseMusicFolder();      
-	}else{
-	    //System.out.println("before");
-	    folderPath = mp3Chooser.chooseMusicFolder(true);
-	    mp3Files = mp3Chooser.chooseOnlyMP3s(folderPath);
-	    mainMP3.player(mp3Files);
-	    filesLoaded = true;
-	    //System.out.println("after");
-			  
-	    //Do you want this to be your default directory?	   
-	    int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to set this music folder as your default music folder?\n\nThis means the folder will be saved as your default when you quit and reopen the program. \nDon't worry you can always change your default music folder.", "Set Default Folder?", JOptionPane.YES_NO_OPTION);
+        if(mp3Chooser.checkDefaultDirectory()){
 
-	    
-	    //if yes, set as default directory
-	    if(dialogResult == JOptionPane.YES_OPTION){
-		mp3Chooser.setDefaultDirectory(folderPath);
-		mp3Chooser.usingDefault = true;
-	    }
-	}//^Martin
-	    
-	
+
+            mp3Files = mp3Chooser.chooseOnlyMP3s(mp3Chooser.getDefaultDirectory());
+            mainMP3.player(mp3Files);
+
+            mp3Chooser.usingDefault = true;
+            filesLoaded = true;
+
+
+            //if there isn't a default directory go straight to chooseMusicFolder();
+        }else{
+            //System.out.println("before");
+            folderPath = mp3Chooser.chooseMusicFolder(true);
+            mp3Files = mp3Chooser.chooseOnlyMP3s(folderPath);
+            mainMP3.player(mp3Files);
+            filesLoaded = true;
+            //System.out.println("after");
+
+            //Do you want this to be your default directory?
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Would you like to set this music folder as your default music folder?\n\nThis means the folder will be saved as your default when you quit and reopen the program. \nDon't worry you can always change your default music folder.", "Set Default Folder?", JOptionPane.YES_NO_OPTION);
+
+
+            //if yes, set as default directory
+            if(dialogResult == JOptionPane.YES_OPTION){
+                mp3Chooser.setDefaultDirectory(folderPath);
+                mp3Chooser.usingDefault = true;
+            }
+        }//^Martin
+
+
         //set background
         Color k = new Color(79,91,102);
         setBackground(k);
@@ -91,8 +91,8 @@ public class MusicPlayer extends Applet implements ActionListener {
         open.addActionListener(this);
         add(open);
 
-	//make Set Default Directory button
-        setDefaultDirectory = new Button("Set Default Music");
+        //make Set Default Directory button
+        setDefaultDirectory = new Button("Set Default Folder");
         gridbag.setConstraints(setDefaultDirectory, c);
         setDefaultDirectory.addActionListener(this);
         add(setDefaultDirectory);
@@ -110,14 +110,14 @@ public class MusicPlayer extends Applet implements ActionListener {
         toggle.addActionListener(this);
         add(toggle);
 	*/
-	
+
         //make show queue button
         queue = new Button("Print Queue");
         gridbag.setConstraints(queue, c);
         queue.addActionListener(this);
         add(queue);
-	
-	 //make something button
+
+        //make something button
         quit = new Button("Quit");
         gridbag.setConstraints(quit, c);
         quit.addActionListener(this);
@@ -125,8 +125,8 @@ public class MusicPlayer extends Applet implements ActionListener {
 
         c.gridwidth = GridBagConstraints.REMAINDER; //complete first row
 
-	 //end of first row
-            
+        //end of first row
+
 
         //print current song playing
 
@@ -182,13 +182,13 @@ public class MusicPlayer extends Applet implements ActionListener {
 
         setSize(400, 500);
 
-	//done with buttons/graphics/layout
+        //done with buttons/graphics/layout
 
 
-	
-    
 
-	
+
+
+
     }// end init();
 
     public void paint(Graphics g){
@@ -203,40 +203,40 @@ public class MusicPlayer extends Applet implements ActionListener {
                 folderPath = mp3Chooser.chooseMusicFolder(false);
                 mp3Files = mp3Chooser.chooseOnlyMP3s(folderPath);
                 mainMP3.player(mp3Files);
-	        mp3Chooser.setFalseDefaultUse();
+                mp3Chooser.setFalseDefaultUse();
                 break;
-		
-	case "Set Default Music":
-	    mp3Chooser.setDefaultDirectory();
-	    folderPath = mp3Chooser.getDefaultDirectory();
-	    mp3Files = mp3Chooser.chooseOnlyMP3s(folderPath);
-	    mainMP3.player(mp3Files);
-	    break;
-	    
+
+            case "Set Default Folder":
+                mp3Chooser.setDefaultDirectory();
+                folderPath = mp3Chooser.getDefaultDirectory();
+                mp3Files = mp3Chooser.chooseOnlyMP3s(folderPath);
+                mainMP3.player(mp3Files);
+                break;
+
             case "Show Graphic":
                 if(filesLoaded == false)
                     break;
                 break;
 
-	case "Print Queue":
-	    
-	    showQueue.showQueue(mainMP3.order.length, mainMP3, MP3Chooser.filePathDirectory);
-	    break;
+            case "Print Queue":
+
+                showQueue.showQueue(mainMP3.order.length, mainMP3, MP3Chooser.filePathDirectory);
+                break;
 
             case "Quit":
                 System.exit(0); //close the program (X button doesn't work in applet)
                 break;
-		
-            case "Toggle Shuffle":               
+
+            case "Toggle Shuffle":
                 mainMP3.toggleShuffle();
                 break;
-		
+
             case "Previous":
                 if(filesLoaded == false)
                     break;
                 mainMP3.skipPrevious();
                 break;
-		
+
             case "Play/Pause":
                 if(filesLoaded == false)
                     break;
@@ -260,7 +260,7 @@ public class MusicPlayer extends Applet implements ActionListener {
                     break;
                 mainMP3.skipNext();
                 break;
-		
+
             case "Repeat Once":
                 if(filesLoaded == false)
                     break;
@@ -270,6 +270,6 @@ public class MusicPlayer extends Applet implements ActionListener {
         }
     }
 
- 
-	
+
+
 }//end file
