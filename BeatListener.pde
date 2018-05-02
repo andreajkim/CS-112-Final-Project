@@ -42,7 +42,7 @@ void setup()
   
   minim = new Minim(this);
   
-  song = minim.loadFile("Marky Mark & the Funky Bunch - Good Vibrations _ LYRICS   SONG _.mp3", 1024); 
+  song = minim.loadFile("REPLACE WITH MP3 FILE", 1024); 
   //Place mp3 file within quotations
   song.play();
  

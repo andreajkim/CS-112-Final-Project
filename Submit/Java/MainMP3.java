@@ -2,106 +2,104 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import javax.swing.*;
 
 public class MainMP3 {
-    
+
     List<CustomPlayer> currentPlayer = new LinkedList<CustomPlayer>(); //creates empty list of songs to be played
     int currentIndex = 0; //stores index of song that is currently playing
     Random rand = new Random(); //create randomizer for shuffle
 
     public boolean everPlayed = false; //has any song been played yet?
     public boolean currentlyPlaying = false; //is a song currently playing?
-    
+
     public boolean isShuffle = false;
     public File[] currentFile;
-    public int[] order; 
+    public int[] order;
 
 
-    
-    //make a music player for each audio file & inits all variables for the new array of files
+
+    //make a music player for each audio file & inits all variables for the new array of files -Feng
     public void player(File[] mp3Name){
 
-	//pauses previous folder of music is it exists; solves bugs around two songs at once
-	if(currentlyPlaying){
-	    pause();
-	}
+        //pauses previous folder of music is it exists; solves bugs around two songs at once
+        if(currentlyPlaying){
+            pause();
+        }
 
-	//this is useful for reverting to non-shuffle state
-	currentFile = mp3Name;
-	
+        //this is useful for reverting to non-shuffle state
+        currentFile = mp3Name;
 
-	//create temporary list of songs to be filled
-        List<CustomPlayer> player = new LinkedList<CustomPlayer>(); 
 
-	//loop through all mp3 files in the chosen directory
-        for(int i = 0; i < mp3Name.length; i++){ 
-	    
+        //create temporary list of songs to be filled
+        List<CustomPlayer> player = new LinkedList<CustomPlayer>();
+
+        //loop through all mp3 files in the chosen directory
+        for(int i = 0; i < mp3Name.length; i++){
+
             CustomPlayer current = new CustomPlayer(); //creates one player to be added to list
             current.setPath(mp3Name[i].getAbsolutePath()); //sets that player to read ith mp3 file
             player.add(current); //add that player to list of players
-	    
+
         }
 
-	//make the order array the right size for the currentFile and put in normal, straightforward order (eg 1,2,3,etc)
-	order = new int[mp3Name.length];
-	for(int i=0; i<order.length; i++){
-	    order[i]=i;
-	}
-	
-        System.out.println("currentPlayer made");
-	//after all players are loaded, overwrite "main" list with loading list
-        currentPlayer = player; 
+        //make the order array the right size for the currentFile and put in normal, straightforward order (eg 1,2,3,etc)
+        order = new int[mp3Name.length];
+        for(int i=0; i<order.length; i++){
+            order[i]=i;
+        }
 
-	//this allows the user to click play/pause button to start listening w/o having to click next
+        System.out.println("currentPlayer made");
+        //after all players are loaded, overwrite "main" list with loading list
+        currentPlayer = player;
+
+        //this allows the user to click play/pause button to start listening w/o having to click next
         play();
-	
+
     }
 
 
-    //choose start point in list of songs
+    //choose start point in list of songs -Feng
     public void setIndex(int index){
         currentIndex = index;
     }
 
-    //return name of MP3 file
+    //return name of MP3 file -Feng
     public String getName(int songsForward){
 
-	if(currentIndex+songsForward <= currentPlayer.size()-1){
-	    
-            
-	    File test = new File(currentPlayer.get(order[currentIndex+songsForward]).getPath());
-	    return test.getName();
-	    
-	}else{
-	    File test = new File(currentPlayer.get(order[currentPlayer.size()-(currentIndex+songsForward)]).getPath());
-	    return test.getName();
-	}
-	    
-        
+        if(currentIndex+songsForward <= currentPlayer.size()-1){
+
+
+            File test = new File(currentPlayer.get(order[currentIndex+songsForward]).getPath());
+            return test.getName();
+
+        }else{
+            File test = new File(currentPlayer.get(order[currentPlayer.size()-(currentIndex+songsForward)]).getPath());
+            return test.getName();
+        }
+
+
     }
 
-    //start playing music
+    //start playing music -Feng
     public void play() {
-        System.out.println("Current Index: " +currentIndex+ "    Order[i] = " + order[currentIndex]); //testing
         everPlayed = true; //records that songs have been played
         currentlyPlaying = true; //records that song is playing
         currentPlayer.get(order[currentIndex]).play(); //plays the song
     }
 
-    
+    //pauses music -Feng
     public void pause(){
         currentlyPlaying = false; //records that song is not playing
         currentPlayer.get(order[currentIndex]).pause(); //pauses song (records current time, makes a new copy, stops the old copy)
     }
 
-    //restarts new player at paused time
+    //restarts new player at paused time -Feng
     public void resume(){
         currentlyPlaying = true;
         currentPlayer.get(order[currentIndex]).resume(); //creates new song that starts at stopped time and starts it
     }
 
-    //skips to next song
+    //skips to next song -Feng
     public void skipNext(){
         stop();
 
@@ -109,19 +107,19 @@ public class MainMP3 {
             currentIndex++; //goes to next index of song list
         } else {
             currentIndex = 0; //if at last index, go to beginning
-	    revertToInOrder();
+            revertToInOrder();
         }
 
         play();
     }
 
-    //skips to previous song
+    //skips to previous song -Feng
     public void skipPrevious(){
         stop();
 
         if(currentIndex != 0) {
             currentIndex--; //goes to previous index of song list
-	    revertToInOrder();
+            revertToInOrder();
         } else {
             currentIndex = currentPlayer.size() - 1; //if at first index, go to end
         }
@@ -129,68 +127,62 @@ public class MainMP3 {
         play();
     }
 
-    //repeats song once (by adding a copy of it)
-    public void repeatOnce(){
-        currentPlayer.add(currentIndex + 1, currentPlayer.get(order[currentIndex])); 
-    }
-
+    //repeats song -Feng/Martin
     public void repeatAlways(){
         currentPlayer.get(order[currentIndex]).play();
     }
-    
+
 
     public void revertToInOrder(){
-	
-	pause();
-	int storedIndex = currentIndex;
-	
-	player(currentFile);
 
-	setIndex(storedIndex);
-	resume();
-	
-	isShuffle = false;
+        pause();
+        int storedIndex = currentIndex;
+
+        player(currentFile);
+
+        setIndex(storedIndex);
+        resume();
+
+        isShuffle = false;
     }
-    
-    //this is what the button activates
+
+    //this is what the button activates -Martin
     public void toggleShuffle(){
-	System.out.println("toggle");
-	if(isShuffle){
-	    revertToInOrder();
-	}else{
-	    System.out.println("shuffle");
-	    shuffle();
-	}
+        System.out.println("toggle");
+        if(isShuffle){
+            revertToInOrder();
+        }else{
+            System.out.println("shuffle");
+            shuffle();
+        }
     }
-    
-    //new version of shuffle -Martin
+
+    //new version of shuffle -Martin/Feng
     public void shuffle(){
-	
-	stop();
-	
-	int placeholder =0;
-	int randNum;
-	
-	for(int i=0;i<order.length; i++){
 
-	    randNum = rand.nextInt(order.length);
-	    
-	    placeholder = order[i];
+        stop();
 
-	    order[i] = order[randNum];
+        int placeholder =0;
+        int randNum;
 
-	    order[randNum] = placeholder;
-	}
+        for(int i=0;i<order.length; i++){
 
-	setIndex(0);
-	play();
-	isShuffle = true;
+            randNum = rand.nextInt(order.length);
+
+            placeholder = order[i];
+
+            order[i] = order[randNum];
+
+            order[randNum] = placeholder;
+        }
+
+        setIndex(0);
+        play();
+        isShuffle = true;
     }
-		 
-	    
-	
-    //????
-    //shuffles order of songs (needs to be fixed)
+
+    //shuffles order of songs (needs to be fixed) -Feng
+    //Martin improved this
     /*public void shuffle(){
       boolean wasPlaying = currentlyPlaying;
 
@@ -268,7 +260,7 @@ public class MainMP3 {
     */
 
 
-    //stops song and makes it restart at beginning next time (pauses/removes current song and replaces it with a new version)
+    //stops song and makes it restart at beginning next time (pauses/removes current song and replaces it with a new version) -Feng
     public void stop(){
         currentPlayer.get(order[currentIndex]).pause(); //pauses player
 
