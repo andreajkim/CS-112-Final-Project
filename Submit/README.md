@@ -7,4 +7,4 @@ To compile: You will need to install JavaZoom (included as jl1.0.1.jar) into you
 
 To run: Run Main method to open applet and run Music Player in Java. Click Open Music and choose a directory with at least one mp3 file in it (one mp3 is included in the zip). Run all Processing files in Processing (the mp3 file must be imported into Processing to be played).
 
-Resources used: CustomPlayer.java is essentially copied from StackOverflow (credited in comments). The few methods of BeatListener which directly listen for beats are mostly copied directly from the BeatListener example on the Minim website (credited in comments).All other code was written.
+Resources used: CustomPlayer.java is essentially copied from StackOverflow (credited in comments). The BeatListener method is copied directly from the BeatListener example on the Minim website (credited in comments). All other code was written.
