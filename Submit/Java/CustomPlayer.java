@@ -17,7 +17,6 @@ public class CustomPlayer {
     private int total;
     private int stopped;
     private boolean valid;
-    public AudioInputStream audioInputStream;
 
     public CustomPlayer(){
         player = null;
@@ -82,7 +81,6 @@ public class CustomPlayer {
             if(pos > -1) FIS.skip(pos);
             BIS = new BufferedInputStream(FIS);
             player = new AdvancedPlayer(BIS);
-            //audioInputStream = new AudioInputStream(path);
             new Thread(
                     new Runnable(){
                         public void run(){
@@ -110,7 +108,6 @@ public class CustomPlayer {
             total = FIS.available();
             BIS = new BufferedInputStream(FIS);
             player = new AdvancedPlayer(BIS);
-            //audioInputStream = new AudioInputStream(path);
             new Thread(
                     new Runnable(){
                         public void run(){
