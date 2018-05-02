@@ -35,7 +35,7 @@ class BeatListener implements AudioListener
     beat.detect(source.mix);
   }
 }
-
+//this method was taken directly from http://code.compartmental.net/minim/beatdetect_field_freq_energy.html
 void setup()
 {
   size(1024, 768, P3D);
